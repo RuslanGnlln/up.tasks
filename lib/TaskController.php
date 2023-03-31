@@ -9,11 +9,9 @@ class TaskController
 {
 	public static function getTaskList()
 	{
-		$result = \Up\Tasks\Model\TasksTable::getList([
+		return \Up\Tasks\Model\TasksTable::getList([
 			'select' => ['*']
-		]);
-
-		return $result->fetchAll();
+		])->fetchAll();
 	}
 
 	public static function addTask()
@@ -23,18 +21,36 @@ class TaskController
 		}
 
 		$task = \Bitrix\Main\Context::getCurrent()->getRequest()->getPost('task-text');
+		$task = trim($task);
+
+		$errors = [];
 
 		if (empty($task)) {
-			LocalRedirect('/tasks/');
+			$errors[] = 'UP_TASKS_ERROR_EMPTY_TASK';
+		}
+
+		if(strlen($task) > 255) {
+			$errors[] = 'UP_TASKS_ERROR_TOO_LONG_TASK';
 		}
 
 		// Добавление задачи
-		$result = \Up\Tasks\Model\TasksTable::add([
-			'TEXT' => $task
-		]);
+		if (empty($errors)) {
+			$result = \Up\Tasks\Model\TasksTable::add([
+				'TEXT' => $task
+			]);
+			if (!$result->isSuccess()){
+				$errors[] = 'UP_TASKS_ERROR_UNEXPECTED';
+				//$errors[] = $result->getErrors();
+			}
+		}
 
-		if (!$result->isSuccess()){
-			print_r($result->getErrors());
+		if (!empty($errors)) {
+			global $APPLICATION;
+			$APPLICATION->IncludeComponent("up:task.list", "errors",
+				[
+					"ERRORS" => $errors
+				]
+			);
 		} else {
 			LocalRedirect('/tasks/');
 		}
@@ -48,11 +64,21 @@ class TaskController
 
 		$taskId = \Bitrix\Main\Context::getCurrent()->getRequest()->getPost('id');
 
-		// Удаление задачи
 		$result = \Up\Tasks\Model\TasksTable::delete((int) $taskId);
 
+		$errors = [];
 		if (!$result->isSuccess()){
-			print_r($result->getErrors());
+			$errors[] = 'UP_TASKS_ERROR_UNEXPECTED';
+			//$errors[] = $result->getErrors();
+		}
+
+		if (!empty($errors)) {
+			global $APPLICATION;
+			$APPLICATION->IncludeComponent("up:task.list", "errors",
+				[
+					"ERRORS" => $errors
+				]
+			);
 		} else {
 			LocalRedirect('/tasks/');
 		}
