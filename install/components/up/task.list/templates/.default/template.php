@@ -23,6 +23,7 @@ Loc::loadMessages(__FILE__);
 							: <?= $task['CREATED_AT']->format($arResult['DATE_FORMAT']) ?></p>
 					</div>
 					<form method="post" action="/tasks/delete/">
+						<?=bitrix_sessid_post()?>
 						<input type="hidden" value="<?= $task['ID'] ?>" name="id">
 						<button class="btn btn-danger h-50" type="submit">x</button>
 					</form>

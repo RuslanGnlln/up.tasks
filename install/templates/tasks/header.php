@@ -29,6 +29,7 @@ Loc::loadMessages(__FILE__);
 		</a>
 		<div class="container-fluid justify-content-center">
 				<form class="d-flex" method="post" action="/tasks/add/">
+					<?=bitrix_sessid_post()?>
 					<input class="form-control me-2" type="text" placeholder="<?= Loc::getMessage('UP_TASKS_PLACEHOLDER') ?>" name="task-text">
 					<button class="btn btn-outline-success" type="submit">+</button>
 				</form>

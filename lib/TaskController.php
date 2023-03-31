@@ -18,11 +18,14 @@ class TaskController
 
 	public static function addTask()
 	{
+		if (!check_bitrix_sessid()) {
+			LocalRedirect('/tasks/');
+		}
+
 		$task = \Bitrix\Main\Context::getCurrent()->getRequest()->getPost('task-text');
 
 		if (empty($task)) {
 			LocalRedirect('/tasks/');
-			exit();
 		}
 
 		// Добавление задачи
@@ -39,6 +42,10 @@ class TaskController
 
 	public static function deleteTask()
 	{
+		if (!check_bitrix_sessid()) {
+			LocalRedirect('/tasks/');
+		}
+
 		$taskId = \Bitrix\Main\Context::getCurrent()->getRequest()->getPost('id');
 
 		// Удаление задачи
