@@ -18,7 +18,7 @@ Loc::loadMessages(__FILE__);
 			<?php foreach ($arResult['TASKS'] as $task): ?>
 				<li class="list-group-item d-flex justify-content-between align-items-center">
 					<div>
-						<p><?= $task['TEXT'] ?></p>
+						<p><?= htmlspecialcharsbx($task['TEXT']) ?></p>
 						<p class="text-secondary"> <?= Loc::getMessage('UP_TASKS_CREATED_AT') ?>
 							: <?= $task['CREATED_AT']->format($arResult['DATE_FORMAT']) ?></p>
 					</div>
